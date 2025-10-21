@@ -3,6 +3,7 @@
 import { useFavorites } from "@/hooks/use-favorites"
 import { useTheme } from "@/hooks/use-theme"
 import { ChevronDown, Heart, Menu, Moon, Search, Sun } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
 import MobileDrawer from "./mobile-drawer"
@@ -28,8 +29,9 @@ export default function Navbar({ searchQuery, onSearchChange, selectedCategory, 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 gap-4 sm:gap-8">
             {/* Logo */}
-            <Link href="/" className="shrink-0 hover:opacity-80 transition-opacity">
-              <h1 className="text-2xl font-bold text-foreground">Prompt Uni</h1>
+            <Link href="/" className="flex flex-row items-center shrink-0 hover:opacity-80 transition-opacity">
+            <Image src="/logo.png" alt="logo" width={892} height={205} className="w-8"/>
+              <h1 className="text-2xl font-bold text-foreground">rompt Uni</h1>
             </Link>
 
             {/* Desktop Search Bar */}
