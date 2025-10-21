@@ -3,7 +3,7 @@
 import { useFavorites } from "@/hooks/use-favorites"
 import { ChevronDown, Heart, Search, X } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 interface MobileDrawerProps {
   isOpen: boolean
@@ -27,6 +27,20 @@ export default function MobileDrawer({
   const [isCategoryOpen, setIsCategoryOpen] = useState(false)
   const { favorites, mounted: favoritesMounted } = useFavorites()
 
+  // ✅ Prevent background scrolling when drawer is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = ""
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = ""
+    }
+  }, [isOpen])
+
   const handleCategorySelect = (category: string) => {
     onCategoryChange(category)
     setIsCategoryOpen(false)
@@ -39,7 +53,13 @@ export default function MobileDrawer({
   return (
     <>
       {/* Overlay */}
-      {isOpen && <div className="fixed inset-0 bg-black/50 backdrop-blur-lg z-40 md:hidden" onClick={onClose} aria-hidden="true" />}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-lg z-40 md:hidden"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
 
       {/* Drawer */}
       <div

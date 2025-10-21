@@ -1,36 +1,55 @@
-"use client"
+"use client";
 
-import { Copy, X } from "lucide-react"
-import { useEffect } from "react"
+import { Copy, X } from "lucide-react";
+import { useEffect } from "react";
 
 interface Prompt {
-  id: string
-  title: string
-  category: string
-  image: string
-  prompt: string
+  id: string;
+  title: string;
+  category: string;
+  image: string;
+  prompt: string;
 }
 
 interface PromptModalProps {
-  prompt: Prompt
-  onClose: () => void
+  prompt: Prompt;
+  onClose: () => void;
 }
 
 export default function PromptModal({ prompt, onClose }: PromptModalProps) {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose()
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [onClose]);
+
+  // ✅ Prevent background scrolling when drawer is open
+  useEffect(() => {
+    if (prompt) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
     }
-    window.addEventListener("keydown", handleEscape)
-    return () => window.removeEventListener("keydown", handleEscape)
-  }, [onClose])
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [prompt]);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(`${prompt.prompt}\nUse the face from the image attached.`)
-  }
+    navigator.clipboard.writeText(
+      `${prompt.prompt}\nUse the face from the image attached.`
+    );
+  };
 
   return (
-    <div className="fixed inset-0 bg-accent/10 backdrop-blur-2xl z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div
+      className="fixed inset-0 bg-accent/10 backdrop-blur-2xl z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
       <div
         className="bg-card rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl shadow-accent/10"
         onClick={(e) => e.stopPropagation()}
@@ -38,7 +57,10 @@ export default function PromptModal({ prompt, onClose }: PromptModalProps) {
         {/* Header */}
         <div className="sticky top-0 flex items-center justify-between p-6 border-b border-border bg-card">
           <h2 className="text-2xl font-bold text-foreground">{prompt.title}</h2>
-          <button onClick={onClose} className="p-2 hover:bg-secondary rounded-lg transition-colors">
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-secondary rounded-lg transition-colors"
+          >
             <X className="w-6 h-6 text-foreground" />
           </button>
         </div>
@@ -47,7 +69,11 @@ export default function PromptModal({ prompt, onClose }: PromptModalProps) {
         <div className="p-6 space-y-6">
           {/* Image */}
           <div className="rounded-lg overflow-hidden">
-            <img src={prompt.image || "/placeholder.svg"} alt={prompt.title} className="w-full h-auto object-cover" />
+            <img
+              src={prompt.image || "/placeholder.svg"}
+              alt={prompt.title}
+              className="w-full h-auto object-cover"
+            />
           </div>
 
           {/* Category */}
@@ -61,7 +87,9 @@ export default function PromptModal({ prompt, onClose }: PromptModalProps) {
           {/* Prompt Text */}
           <div>
             <p className="text-sm text-muted-foreground mb-2">Prompt</p>
-            <p className="text-foreground bg-foreground/5 p-4 rounded-lg leading-relaxed">{prompt.prompt}</p>
+            <p className="text-foreground bg-foreground/5 p-4 rounded-lg leading-relaxed">
+              {prompt.prompt}
+            </p>
           </div>
 
           {/* Instructions */}
@@ -98,5 +126,5 @@ export default function PromptModal({ prompt, onClose }: PromptModalProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }
