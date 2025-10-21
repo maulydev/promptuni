@@ -39,7 +39,7 @@ export default function MobileDrawer({
   return (
     <>
       {/* Overlay */}
-      {isOpen && <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={onClose} aria-hidden="true" />}
+      {isOpen && <div className="fixed inset-0 bg-black/50 backdrop-blur-lg z-40 md:hidden" onClick={onClose} aria-hidden="true" />}
 
       {/* Drawer */}
       <div
