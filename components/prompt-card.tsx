@@ -1,7 +1,7 @@
 "use client"
 
-import { Copy, Heart } from "lucide-react"
 import { useFavorites } from "@/hooks/use-favorites"
+import { Copy, Heart } from "lucide-react"
 
 interface Prompt {
   id: string
@@ -50,7 +50,7 @@ export default function PromptCard({ prompt, onSelect }: PromptCardProps) {
       <div className="space-y-2">
         <h3 className="font-semibold text-foreground text-sm line-clamp-2">{prompt.title}</h3>
         <div className="flex items-center justify-between">
-          <span className="text-xs px-2 py-1 bg-accent/20 text-accent-foreground rounded-full">{prompt.category}</span>
+          <span className="text-xs px-2 py-1 bg-accent text-accent-foreground rounded-full">{prompt.category}</span>
           <button
             onClick={(e) => {
               e.stopPropagation()

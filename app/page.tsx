@@ -1,11 +1,11 @@
 "use client"
 
-import { useState } from "react"
-import Navbar from "@/components/navbar"
+import Footer from "@/components/footer"
 import HeroSection from "@/components/hero-section"
+import Navbar from "@/components/navbar"
 import PromptGallery from "@/components/prompt-gallery"
 import PromptModal from "@/components/prompt-modal"
-import Footer from "@/components/footer"
+import { useState } from "react"
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("")

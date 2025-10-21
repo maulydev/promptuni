@@ -1,9 +1,9 @@
 "use client"
 
-import { X, Search, ChevronDown, Heart } from "lucide-react"
-import { useState } from "react"
-import Link from "next/link"
 import { useFavorites } from "@/hooks/use-favorites"
+import { ChevronDown, Heart, Search, X } from "lucide-react"
+import Link from "next/link"
+import { useState } from "react"
 
 interface MobileDrawerProps {
   isOpen: boolean
@@ -52,7 +52,7 @@ export default function MobileDrawer({
           <h2 className="text-lg font-bold text-foreground">Menu</h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-secondary rounded-lg transition-colors"
+            className="p-2 hover:bg-foreground/5 rounded-lg transition-colors"
             aria-label="Close menu"
           >
             <X className="w-5 h-5 text-foreground" />
@@ -69,7 +69,7 @@ export default function MobileDrawer({
               placeholder="Search prompts…"
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-secondary text-foreground placeholder-muted-foreground rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-accent"
+              className="w-full pl-10 pr-4 py-2 bg-foreground/5 text-foreground placeholder-muted-foreground rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-accent"
             />
           </div>
 
@@ -77,7 +77,7 @@ export default function MobileDrawer({
           <div>
             <button
               onClick={() => setIsCategoryOpen(!isCategoryOpen)}
-              className="w-full flex items-center justify-between px-4 py-2 bg-secondary text-foreground rounded-lg border border-border hover:bg-muted transition-colors"
+              className="w-full flex items-center justify-between px-4 py-2 bg-foreground/5 text-foreground rounded-lg border border-border hover:bg-muted transition-colors"
             >
               <span>{selectedCategory}</span>
               <ChevronDown className={`w-4 h-4 transition-transform ${isCategoryOpen ? "rotate-180" : ""}`} />
@@ -107,7 +107,7 @@ export default function MobileDrawer({
             <Link
               href="/saved-prompts"
               onClick={handleLinkClick}
-              className="flex items-center gap-2 px-4 py-2 bg-secondary text-foreground rounded-lg border border-border hover:bg-muted transition-colors w-full"
+              className="flex items-center gap-2 px-4 py-2 bg-foreground/5 text-foreground rounded-lg border border-border hover:bg-muted transition-colors w-full"
             >
               <Heart className="w-4 h-4" />
               <span className="font-medium">Saved Prompts</span>
@@ -121,7 +121,7 @@ export default function MobileDrawer({
           <Link
             href="/all-prompts"
             onClick={handleLinkClick}
-            className="flex items-center px-4 py-2 bg-secondary text-foreground rounded-lg border border-border hover:bg-muted transition-colors w-full"
+            className="flex items-center px-4 py-2 bg-foreground/5 text-foreground rounded-lg border border-border hover:bg-muted transition-colors w-full"
           >
             <span className="font-medium">All Prompts</span>
           </Link>

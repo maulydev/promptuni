@@ -1,12 +1,12 @@
 "use client"
 
-import { useState, useMemo } from "react"
-import Link from "next/link"
+import Footer from "@/components/footer"
 import Navbar from "@/components/navbar"
 import PromptCard from "@/components/prompt-card"
 import PromptModal from "@/components/prompt-modal"
-import Footer from "@/components/footer"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import Link from "next/link"
+import { useMemo, useState } from "react"
 
 interface Prompt {
   id: string
@@ -177,8 +177,8 @@ export default function AllPromptsPage() {
       />
 
       {/* Hero Section for All Prompts Page */}
-      <section className="relative py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background via-background to-secondary/20">
-        <div className="max-w-4xl mx-auto">
+      <section className="relative py-16 px-4 sm:px-6 lg:px-8 bg-linear-to-b from-background via-background to-secondary/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link href="/" className="text-primary hover:underline mb-4 inline-block">
             ← Back to Home
           </Link>
@@ -191,8 +191,8 @@ export default function AllPromptsPage() {
       </section>
 
       {/* Gallery with pagination */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-background">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-16 bg-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {paginatedPrompts.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-muted-foreground text-lg">No prompts found. Try adjusting your search or category.</p>
@@ -210,7 +210,7 @@ export default function AllPromptsPage() {
                   <button
                     onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                     disabled={currentPage === 1}
-                    className="flex items-center gap-2 px-4 py-2 bg-secondary text-foreground rounded-lg border border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-foreground/10 text-foreground rounded-lg border border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <ChevronLeft className="w-4 h-4" />
                     Previous
@@ -224,7 +224,7 @@ export default function AllPromptsPage() {
                         className={`w-10 h-10 rounded-lg border transition-colors ${
                           currentPage === page
                             ? "bg-accent text-accent-foreground border-accent"
-                            : "bg-secondary text-foreground border-border hover:bg-muted"
+                            : "bg-foreground/10 text-foreground border-border hover:bg-muted"
                         }`}
                       >
                         {page}
@@ -235,7 +235,7 @@ export default function AllPromptsPage() {
                   <button
                     onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                     disabled={currentPage === totalPages}
-                    className="flex items-center gap-2 px-4 py-2 bg-secondary text-foreground rounded-lg border border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-foreground/10 text-foreground rounded-lg border border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     Next
                     <ChevronRight className="w-4 h-4" />

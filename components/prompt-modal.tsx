@@ -26,7 +26,7 @@ export default function PromptModal({ prompt, onClose }: PromptModalProps) {
   }, [onClose])
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(prompt.prompt)
+    navigator.clipboard.writeText(`${prompt.prompt}\nUse the face from the image attached.`)
   }
 
   return (
@@ -53,7 +53,7 @@ export default function PromptModal({ prompt, onClose }: PromptModalProps) {
           {/* Category */}
           <div>
             <p className="text-sm text-muted-foreground mb-2">Category</p>
-            <span className="inline-block px-3 py-1 bg-accent/20 text-accent-foreground rounded-full text-sm">
+            <span className="inline-block px-3 py-1 bg-accent text-accent-foreground rounded-full text-sm">
               {prompt.category}
             </span>
           </div>
@@ -61,7 +61,7 @@ export default function PromptModal({ prompt, onClose }: PromptModalProps) {
           {/* Prompt Text */}
           <div>
             <p className="text-sm text-muted-foreground mb-2">Prompt</p>
-            <p className="text-foreground bg-secondary p-4 rounded-lg leading-relaxed">{prompt.prompt}</p>
+            <p className="text-foreground bg-foreground/5 p-4 rounded-lg leading-relaxed">{prompt.prompt}</p>
           </div>
 
           {/* Instructions */}

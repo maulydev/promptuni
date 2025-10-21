@@ -1,13 +1,13 @@
 "use client"
 
-import { useState, useMemo } from "react"
-import Link from "next/link"
+import Footer from "@/components/footer"
 import Navbar from "@/components/navbar"
 import PromptCard from "@/components/prompt-card"
 import PromptModal from "@/components/prompt-modal"
-import Footer from "@/components/footer"
 import { useFavorites } from "@/hooks/use-favorites"
 import { ChevronLeft } from "lucide-react"
+import Link from "next/link"
+import { useMemo, useState } from "react"
 
 interface Prompt {
   id: string
@@ -142,8 +142,8 @@ export default function SavedPromptsPage() {
       />
 
       {/* Hero Section */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-background border-b border-border">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-12 bg-background border-b border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link
             href="/"
             className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-6"
@@ -159,8 +159,8 @@ export default function SavedPromptsPage() {
       </section>
 
       {/* Gallery Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-background">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-16 bg-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {savedPrompts.length === 0 ? (
             <div className="text-center py-20">
               <p className="text-muted-foreground text-lg mb-4">No saved prompts yet.</p>

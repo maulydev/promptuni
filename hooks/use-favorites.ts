@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 
 export function useFavorites() {
   const [favorites, setFavorites] = useState<string[]>([])
-  const [mounted, setMounted] = useState(false)
+  const [mounted, setMounted] = useState<boolean>(false)
 
   useEffect(() => {
     setMounted(true)

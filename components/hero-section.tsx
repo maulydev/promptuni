@@ -1,5 +1,6 @@
 "use client";
 
+import { APP_NAME } from "@/data";
 import Link from "next/link";
 
 export default function HeroSection() {
@@ -13,7 +14,7 @@ export default function HeroSection() {
       <div className="max-w-4xl mx-auto text-center">
         <h2 className="text-5xl sm:text-6xl font-bold text-foreground mb-6 text-balance">
           Discover, Copy & Create with{" "}
-          <span className="text-primary">Prompt Uni</span>.
+          <span className="text-primary">{APP_NAME}</span>.
         </h2>
         <p className="text-xl text-muted-foreground mb-8 text-balance">
           Explore a universe of trending AI image prompts. Copy your favorites
@@ -24,13 +25,13 @@ export default function HeroSection() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button
             onClick={handleScroll}
-            className="px-8 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition-opacity"
+            className="px-8 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer"
           >
-            Browse Prompts
+            Browse Trending
           </button>
           <Link
             href="/all-prompts"
-            className="px-8 py-3 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:opacity-90 transition-opacity"
+            className="px-8 py-3 bg-background border border-accent text-accent rounded-lg font-semibold hover:opacity-90 transition-opacity"
           >
             View All Prompts
           </Link>

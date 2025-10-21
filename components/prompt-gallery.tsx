@@ -120,8 +120,8 @@ export default function PromptGallery({ searchQuery, selectedCategory, onPromptS
   }, [searchQuery, selectedCategory])
 
   return (
-    <section id="prompt-gallery" className="py-16 px-4 sm:px-6 lg:px-8 bg-background">
-      <div className="max-w-7xl mx-auto">
+    <section id="prompt-gallery" className="py-16 bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold text-foreground mb-12">Trending Prompts</h2>
 
         {filteredPrompts.length === 0 ? (
