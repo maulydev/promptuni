@@ -1,20 +1,20 @@
-"use client"
+"use client";
 
-import Footer from "@/components/footer"
-import Navbar from "@/components/navbar"
-import PromptCard from "@/components/prompt-card"
-import PromptModal from "@/components/prompt-modal"
-import { useFavorites } from "@/hooks/use-favorites"
-import { ChevronLeft } from "lucide-react"
-import Link from "next/link"
-import { useMemo, useState } from "react"
+import Footer from "@/components/footer";
+import Navbar from "@/components/navbar";
+import PromptCard from "@/components/prompt-card";
+import PromptModal from "@/components/prompt-modal";
+import { useFavorites } from "@/hooks/use-favorites";
+import { ChevronLeft } from "lucide-react";
+import Link from "next/link";
+import { useMemo, useState } from "react";
 
 interface Prompt {
-  id: string
-  title: string
-  category: string
-  image: string
-  prompt: string
+  id: string;
+  title: string;
+  category: string;
+  image: string;
+  prompt: string;
 }
 
 const allPrompts: Prompt[] = [
@@ -47,7 +47,8 @@ const allPrompts: Prompt[] = [
     title: "Fantasy Warrior",
     category: "Fantasy",
     image: "/fantasy-warrior.png",
-    prompt: "Epic fantasy warrior with intricate armor, magical aura, and mystical background. High fantasy art style.",
+    prompt:
+      "Epic fantasy warrior with intricate armor, magical aura, and mystical background. High fantasy art style.",
   },
   {
     id: "5",
@@ -70,7 +71,8 @@ const allPrompts: Prompt[] = [
     title: "Cartoon Adventure",
     category: "Cartoon",
     image: "/cartoon-adventure-scene.jpg",
-    prompt: "Colorful cartoon adventure scene with playful characters, vibrant backgrounds, and whimsical style.",
+    prompt:
+      "Colorful cartoon adventure scene with playful characters, vibrant backgrounds, and whimsical style.",
   },
   {
     id: "8",
@@ -85,51 +87,58 @@ const allPrompts: Prompt[] = [
     title: "Dragon Fantasy",
     category: "Fantasy",
     image: "/dragon-fantasy-art.jpg",
-    prompt: "Majestic dragon in fantasy landscape with magical effects, detailed scales, and epic composition.",
+    prompt:
+      "Majestic dragon in fantasy landscape with magical effects, detailed scales, and epic composition.",
   },
   {
     id: "10",
     title: "Luxury Watch",
     category: "Product",
     image: "/luxury-watch-product.jpg",
-    prompt: "Luxury watch product shot with premium lighting, reflective surfaces, and elegant styling.",
+    prompt:
+      "Luxury watch product shot with premium lighting, reflective surfaces, and elegant styling.",
   },
   {
     id: "11",
     title: "Fashion Portrait",
     category: "Portrait",
     image: "/fashion-portrait-model.jpg",
-    prompt: "High fashion portrait with editorial styling, professional makeup, and sophisticated lighting.",
+    prompt:
+      "High fashion portrait with editorial styling, professional makeup, and sophisticated lighting.",
   },
   {
     id: "12",
     title: "Pixel Art Character",
     category: "Cartoon",
     image: "/pixel-art-character.png",
-    prompt: "Retro pixel art character with vibrant colors, 8-bit style, and nostalgic gaming aesthetic.",
+    prompt:
+      "Retro pixel art character with vibrant colors, 8-bit style, and nostalgic gaming aesthetic.",
   },
-]
+];
 
 export default function SavedPromptsPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("All")
-  const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null)
-  const { favorites, mounted } = useFavorites()
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
+  const { favorites, mounted } = useFavorites();
 
   const savedPrompts = useMemo(() => {
-    return allPrompts.filter((prompt) => favorites.includes(prompt.id))
-  }, [favorites])
+    return allPrompts.filter((prompt) => favorites.includes(prompt.id));
+  }, [favorites]);
 
   const filteredPrompts = useMemo(() => {
     return savedPrompts.filter((prompt) => {
-      const matchesSearch = prompt.title.toLowerCase().includes(searchQuery.toLowerCase())
-      const matchesCategory = selectedCategory === "All" || prompt.category === selectedCategory
-      return matchesSearch && matchesCategory
-    })
-  }, [savedPrompts, searchQuery, selectedCategory])
+      const matchesSearch = prompt.title
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      const matchesCategory =
+        selectedCategory === "All" || prompt.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [savedPrompts, searchQuery, selectedCategory]);
 
   if (!mounted) {
-    return null
+    return null;
   }
 
   return (
@@ -151,9 +160,12 @@ export default function SavedPromptsPage() {
             <ChevronLeft className="w-4 h-4" />
             Back to Home
           </Link>
-          <h1 className="text-4xl font-bold text-foreground mb-2">Saved Prompts</h1>
+          <h1 className="text-4xl font-bold text-foreground mb-2">
+            Saved Prompts
+          </h1>
           <p className="text-muted-foreground">
-            {savedPrompts.length} {savedPrompts.length === 1 ? "prompt" : "prompts"} saved
+            {savedPrompts.length}{" "}
+            {savedPrompts.length === 1 ? "prompt" : "prompts"} saved
           </p>
         </div>
       </section>
@@ -162,9 +174,13 @@ export default function SavedPromptsPage() {
       <section className="py-16 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {savedPrompts.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="text-muted-foreground text-lg mb-4">No saved prompts yet.</p>
-              <p className="text-muted-foreground mb-8">Start favoriting prompts to see them here!</p>
+            <div className="flex flex-col items-center justify-center py-32 px-4 text-center bg-foreground/5 rounded-3xl">
+              <p className="text-muted-foreground text-lg mb-4">
+                No saved prompts yet.
+              </p>
+              <p className="text-muted-foreground mb-8">
+                Start favoriting prompts to see them here!
+              </p>
               <Link
                 href="/"
                 className="inline-block px-6 py-2 bg-accent text-accent-foreground rounded-lg hover:bg-accent/90 transition-colors"
@@ -173,21 +189,47 @@ export default function SavedPromptsPage() {
               </Link>
             </div>
           ) : filteredPrompts.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground text-lg">No saved prompts match your search or category.</p>
+            <div className="flex flex-col items-center justify-center py-32 px-4 text-center bg-foreground/5 rounded-3xl">
+              <div className="bg-foreground/5 text-primary rounded-full w-16 h-16 flex items-center justify-center mb-6">
+                <span className="text-2xl">😕</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-semibold text-foreground mb-2">
+                No prompts found
+              </h2>
+              <p className="text-muted-foreground text-lg mb-6">
+                Try adjusting your search or selecting a different category.
+              </p>
+              <button
+                className="px-6 py-2 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/80 transition-colors shadow-sm"
+                onClick={() => {
+                  setSelectedCategory("All");
+                  setSearchQuery("");
+                }}
+              >
+                Reset Filters
+              </button>
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {filteredPrompts.map((prompt) => (
-                <PromptCard key={prompt.id} prompt={prompt} onSelect={setSelectedPrompt} />
+                <PromptCard
+                  key={prompt.id}
+                  prompt={prompt}
+                  onSelect={setSelectedPrompt}
+                />
               ))}
             </div>
           )}
         </div>
       </section>
 
-      {selectedPrompt && <PromptModal prompt={selectedPrompt} onClose={() => setSelectedPrompt(null)} />}
+      {selectedPrompt && (
+        <PromptModal
+          prompt={selectedPrompt}
+          onClose={() => setSelectedPrompt(null)}
+        />
+      )}
       <Footer />
     </main>
-  )
+  );
 }

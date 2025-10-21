@@ -11,6 +11,9 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Prompt Uni - AI Image Generation Prompts",
   description: "Discover and use trending AI image generation prompts for Gemini and other AI tools",
+  icons: {
+    icon: "/favicon.ico",
+  }
 }
 
 export default function RootLayout({

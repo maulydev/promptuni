@@ -30,9 +30,9 @@ export default function PromptModal({ prompt, onClose }: PromptModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div className="fixed inset-0 bg-accent/10 backdrop-blur-2xl z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div
-        className="bg-card rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+        className="bg-card rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl shadow-accent/10"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
