@@ -2,7 +2,7 @@ export interface Prompt {
   id: string;
   title: string;
   help_text: string;
-  image: string;
+  image_url: string;
   prompt: string;
   created_at: string;
   category_id: string;

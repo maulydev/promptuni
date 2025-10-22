@@ -65,7 +65,7 @@ export default function PromptModal({ prompt, onClose }: PromptModalProps) {
           {/* Image */}
           <div className="rounded-lg overflow-hidden">
             <ImageWithFallback
-              src={prompt.image}
+              src={prompt.image_url}
               alt={prompt.title}
               className="w-full h-auto object-cover"
               fallbackClassName="w-full h-96 object-cover"

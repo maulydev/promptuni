@@ -1,54 +1,20 @@
-"use client"
+"use client";
 
-import { useFavorites } from "@/hooks/use-favorites"
-import { ChevronDown, Heart, Search, X } from "lucide-react"
-import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useFavoritesStore } from "@/stores/useFavoritesStore";
+import { Heart, X } from "lucide-react";
+import Link from "next/link";
 
 interface MobileDrawerProps {
-  isOpen: boolean
-  onClose: () => void
-  searchQuery: string
-  onSearchChange: (query: string) => void
-  selectedCategory: string
-  onCategoryChange: (category: string) => void
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-const categories = ["All", "Portrait", "Cartoon", "Cinematic", "Fantasy", "Product"]
-
-export default function MobileDrawer({
-  isOpen,
-  onClose,
-  searchQuery,
-  onSearchChange,
-  selectedCategory,
-  onCategoryChange,
-}: MobileDrawerProps) {
-  const [isCategoryOpen, setIsCategoryOpen] = useState(false)
-  const { favorites, mounted: favoritesMounted } = useFavorites()
-
-  // ✅ Prevent background scrolling when drawer is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden"
-    } else {
-      document.body.style.overflow = ""
-    }
-
-    // Cleanup on unmount
-    return () => {
-      document.body.style.overflow = ""
-    }
-  }, [isOpen])
-
-  const handleCategorySelect = (category: string) => {
-    onCategoryChange(category)
-    setIsCategoryOpen(false)
-  }
+export default function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
+  const { favorites, mounted } = useFavoritesStore();
 
   const handleLinkClick = () => {
-    onClose()
-  }
+    onClose();
+  };
 
   return (
     <>
@@ -81,49 +47,8 @@ export default function MobileDrawer({
 
         {/* Drawer Content */}
         <div className="overflow-y-auto h-[calc(100vh-60px)] p-4 space-y-4">
-          {/* Search Bar */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Search prompts…"
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-foreground/5 text-foreground placeholder-muted-foreground rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-accent"
-            />
-          </div>
-
-          {/* Category Dropdown */}
-          <div>
-            <button
-              onClick={() => setIsCategoryOpen(!isCategoryOpen)}
-              className="w-full flex items-center justify-between px-4 py-2 bg-foreground/5 text-foreground rounded-lg border border-border hover:bg-muted transition-colors"
-            >
-              <span>{selectedCategory}</span>
-              <ChevronDown className={`w-4 h-4 transition-transform ${isCategoryOpen ? "rotate-180" : ""}`} />
-            </button>
-
-            {isCategoryOpen && (
-              <div className="mt-2 space-y-1 bg-card border border-border rounded-lg p-2">
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    onClick={() => handleCategorySelect(category)}
-                    className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                      selectedCategory === category
-                        ? "bg-accent text-accent-foreground"
-                        : "text-foreground hover:bg-muted"
-                    }`}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
           {/* Saved Prompts Link */}
-          {favoritesMounted && (
+          {mounted && (
             <Link
               href="/saved-prompts"
               onClick={handleLinkClick}
@@ -148,5 +73,5 @@ export default function MobileDrawer({
         </div>
       </div>
     </>
-  )
+  );
 }

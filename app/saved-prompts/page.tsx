@@ -1,185 +1,21 @@
 "use client";
 
-import Footer from "@/components/footer";
-import Navbar from "@/components/navbar";
 import PromptCard from "@/components/prompt-card";
 import PromptModal from "@/components/prompt-modal";
-import { useFavorites } from "@/hooks/use-favorites";
+import { useFavoritesStore } from "@/stores/useFavoritesStore";
 import { Prompt } from "@/types/prompt";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
-import { useMemo, useState } from "react";
-
-
-const allPrompts: Prompt[] = [
-  {
-    id: "1",
-    title: "Vintage Studio Portrait",
-    category: "Portrait",
-    image: "/vintage-studio-portrait.jpg",
-    prompt:
-      "A vintage studio portrait with warm sepia tones, professional lighting, and classic composition. Shot on film with soft focus background.",
-    created_at: "2023-08-01 12:00:00",
-    help_text: "",
-    category_id: "12345678"
-  },
-  {
-    id: "2",
-    title: "Anime Character",
-    category: "Cartoon",
-    image: "/anime-character-art.jpg",
-    prompt:
-      "Beautiful anime character with expressive eyes, vibrant colors, and detailed hair. Studio Ghibli style illustration.",
-    created_at: "2023-08-01 12:00:00",
-    help_text: "",
-    category_id: "12345678"
-  },
-  {
-    id: "3",
-    title: "Cinematic Hero Shot",
-    category: "Cinematic",
-    image: "/cinematic-hero-shot.jpg",
-    prompt:
-      "Epic cinematic hero shot with dramatic lighting, volumetric fog, and cinematic color grading. Movie poster quality.",
-    created_at: "2023-08-01 12:00:00",
-    help_text: "",
-    category_id: "12345678"
-  },
-  {
-    id: "4",
-    title: "Fantasy Warrior",
-    category: "Fantasy",
-    image: "/fantasy-warrior.png",
-    prompt:
-      "Epic fantasy warrior with intricate armor, magical aura, and mystical background. High fantasy art style.",
-    created_at: "2023-08-01 12:00:00",
-    help_text: "",
-    category_id: "12345678"
-  },
-  {
-    id: "5",
-    title: "Product Photography",
-    category: "Product",
-    image: "/professional-product-photography.png",
-    prompt:
-      "Professional product photography with clean white background, perfect lighting, and sharp focus. Commercial quality.",
-    created_at: "2023-08-01 12:00:00",
-    help_text: "",
-    category_id: "12345678"
-  },
-  {
-    id: "6",
-    title: "Oil Painting Portrait",
-    category: "Portrait",
-    image: "/oil-painting-portrait.png",
-    prompt:
-      "Classical oil painting portrait with rich textures, warm color palette, and masterful brushwork. Renaissance style.",
-    created_at: "2023-08-01 12:00:00",
-    help_text: "",
-    category_id: "12345678"
-  },
-  {
-    id: "7",
-    title: "Cartoon Adventure",
-    category: "Cartoon",
-    image: "/cartoon-adventure-scene.jpg",
-    prompt:
-      "Colorful cartoon adventure scene with playful characters, vibrant backgrounds, and whimsical style.",
-    created_at: "2023-08-01 12:00:00",
-    help_text: "",
-    category_id: "12345678"
-  },
-  {
-    id: "8",
-    title: "Sci-Fi Landscape",
-    category: "Cinematic",
-    image: "/sci-fi-landscape-futuristic.jpg",
-    prompt:
-      "Futuristic sci-fi landscape with neon lights, flying vehicles, and cyberpunk atmosphere. Blade Runner inspired.",
-    created_at: "2023-08-01 12:00:00",
-    help_text: "",
-    category_id: "12345678"
-  },
-  {
-    id: "9",
-    title: "Dragon Fantasy",
-    category: "Fantasy",
-    image: "/dragon-fantasy-art.jpg",
-    prompt:
-      "Majestic dragon in fantasy landscape with magical effects, detailed scales, and epic composition.",
-    created_at: "2023-08-01 12:00:00",
-    help_text: "",
-    category_id: "12345678"
-  },
-  {
-    id: "10",
-    title: "Luxury Watch",
-    category: "Product",
-    image: "/luxury-watch-product.jpg",
-    prompt:
-      "Luxury watch product shot with premium lighting, reflective surfaces, and elegant styling.",
-    created_at: "2023-08-01 12:00:00",
-    help_text: "",
-    category_id: "12345678"
-  },
-  {
-    id: "11",
-    title: "Fashion Portrait",
-    category: "Portrait",
-    image: "/fashion-portrait-model.jpg",
-    prompt:
-      "High fashion portrait with editorial styling, professional makeup, and sophisticated lighting.",
-    created_at: "2023-08-01 12:00:00",
-    help_text: "",
-    category_id: "12345678"
-  },
-  {
-    id: "12",
-    title: "Pixel Art Character",
-    category: "Cartoon",
-    image: "/pixel-art-character.png",
-    prompt:
-      "Retro pixel art character with vibrant colors, 8-bit style, and nostalgic gaming aesthetic.",
-    created_at: "2023-08-01 12:00:00",
-    help_text: "",
-    category_id: "12345678"
-  },
-];
+import { useState } from "react";
 
 export default function SavedPromptsPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
-  const { favorites, mounted } = useFavorites();
+  const { favorites, mounted } = useFavoritesStore();
 
-  const savedPrompts = useMemo(() => {
-    return allPrompts.filter((prompt) => favorites.includes(prompt.id));
-  }, [favorites]);
-
-  const filteredPrompts = useMemo(() => {
-    return savedPrompts.filter((prompt) => {
-      const matchesSearch = prompt.title
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-      const matchesCategory =
-        selectedCategory === "All" || prompt.category === selectedCategory;
-      return matchesSearch && matchesCategory;
-    });
-  }, [savedPrompts, searchQuery, selectedCategory]);
-
-  if (!mounted) {
-    return null;
-  }
+  if (!mounted) return null;
 
   return (
     <main className="min-h-screen bg-background">
-      <Navbar
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
-      />
-
       {/* Hero Section */}
       <section className="py-12 bg-background border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -194,8 +30,7 @@ export default function SavedPromptsPage() {
             Saved Prompts
           </h1>
           <p className="text-muted-foreground">
-            {savedPrompts.length}{" "}
-            {savedPrompts.length === 1 ? "prompt" : "prompts"} saved
+            {favorites.length} {favorites.length === 1 ? "prompt" : "prompts"} saved
           </p>
         </div>
       </section>
@@ -203,7 +38,7 @@ export default function SavedPromptsPage() {
       {/* Gallery Section */}
       <section className="py-16 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {savedPrompts.length === 0 ? (
+          {favorites.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-32 px-4 text-center bg-foreground/5 rounded-3xl">
               <p className="text-muted-foreground text-lg mb-4">
                 No saved prompts yet.
@@ -218,30 +53,9 @@ export default function SavedPromptsPage() {
                 Browse Prompts
               </Link>
             </div>
-          ) : filteredPrompts.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-32 px-4 text-center bg-foreground/5 rounded-3xl">
-              <div className="bg-foreground/5 text-primary rounded-full w-16 h-16 flex items-center justify-center mb-6">
-                <span className="text-2xl">😕</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-semibold text-foreground mb-2">
-                No prompts found
-              </h2>
-              <p className="text-muted-foreground text-lg mb-6">
-                Try adjusting your search or selecting a different category.
-              </p>
-              <button
-                className="px-6 py-2 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/80 transition-colors shadow-sm"
-                onClick={() => {
-                  setSelectedCategory("All");
-                  setSearchQuery("");
-                }}
-              >
-                Reset Filters
-              </button>
-            </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {filteredPrompts.map((prompt) => (
+              {favorites.map((prompt: Prompt) => (
                 <PromptCard
                   key={prompt.id}
                   prompt={prompt}
@@ -253,13 +67,13 @@ export default function SavedPromptsPage() {
         </div>
       </section>
 
+      {/* Modal */}
       {selectedPrompt && (
         <PromptModal
           prompt={selectedPrompt}
           onClose={() => setSelectedPrompt(null)}
         />
       )}
-      <Footer />
     </main>
   );
 }

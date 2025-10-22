@@ -6,11 +6,7 @@ import { useEffect, useState } from "react";
 import PromptCard from "./prompt-card";
 
 interface PromptGalleryProps {
-  searchQuery: string;
-  selectedCategory: string;
   onPromptSelect: (prompt: Prompt) => void;
-  setSearchQuery: (query: string) => void;
-  setSelectedCategory: (category: string) => void;
 }
 
 export default function PromptGallery({
@@ -28,7 +24,7 @@ export default function PromptGallery({
 
         let query = supabase
           .from<"Prompts", Prompt>("Prompts")
-          .select(`*, Category(*)`).range(0, 7);
+          .select(`*, Category(*)`).order("created_at").range(0, 7);
 
         const { data, error } = await query.order("created_at", {
           ascending: false,

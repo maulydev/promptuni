@@ -1,10 +1,7 @@
-"use client";
-
-import { useFavorites } from "@/hooks/use-favorites";
+import { useFavoritesStore } from "@/stores/useFavoritesStore";
 import { Prompt } from "@/types/prompt";
 import { Copy, Heart } from "lucide-react";
 import ImageWithFallback from "./image-with-fallback";
-
 
 interface PromptCardProps {
   prompt: Prompt;
@@ -12,13 +9,15 @@ interface PromptCardProps {
 }
 
 export default function PromptCard({ prompt, onSelect }: PromptCardProps) {
-  const { isFavorite, toggleFavorite, mounted } = useFavorites();
+  const { toggleFavorite, isFavorite, mounted } = useFavoritesStore();
+
+  const favoriteStatus = isFavorite(prompt.id);
 
   return (
     <div className="group cursor-pointer" onClick={() => onSelect(prompt)}>
       <div className="relative overflow-hidden rounded-lg bg-accent/20 mb-4 aspect-square">
         <ImageWithFallback
-          src={prompt.image}
+          src={prompt.image_url}
           alt={prompt.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
@@ -28,20 +27,14 @@ export default function PromptCard({ prompt, onSelect }: PromptCardProps) {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              toggleFavorite(prompt.id);
+              toggleFavorite(prompt);
             }}
             className="absolute top-2 right-2 p-2 bg-black/50 hover:bg-black/70 rounded-lg transition-colors"
-            title={
-              isFavorite(prompt.id)
-                ? "Remove from favorites"
-                : "Add to favorites"
-            }
+            title={favoriteStatus ? "Remove from favorites" : "Add to favorites"}
           >
             <Heart
               className={`w-5 h-5 transition-colors ${
-                isFavorite(prompt.id)
-                  ? "fill-red-500 text-red-500"
-                  : "text-white"
+                favoriteStatus ? "fill-red-500 text-red-500" : "text-white"
               }`}
             />
           </button>

@@ -1,78 +1,21 @@
 "use client";
 
-import { supabase } from "@/api/client";
 import { APP_NAME } from "@/data";
-import { useFavorites } from "@/hooks/use-favorites";
 import { useTheme } from "@/hooks/use-theme";
-import { Category } from "@/types/prompt";
-import { debounce } from "lodash";
-import {
-  ChevronDown,
-  Heart,
-  HeartIcon,
-  Menu,
-  Moon,
-  Search,
-  Sun,
-} from "lucide-react";
+import { useFavoritesStore } from "@/stores/useFavoritesStore";
+import { Heart, HeartIcon, Menu, Moon, Sun } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import MobileDrawer from "./mobile-drawer";
 
-interface NavbarProps {
-  searchQuery: string;
-  onSearchChange: (query: string) => void;
-  selectedCategory: string;
-  onCategoryChange: (category: string) => void;
-}
-
-export default function Navbar({
-  searchQuery,
-  onSearchChange,
-  selectedCategory,
-  onCategoryChange,
-}: NavbarProps) {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+export default function Navbar() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { theme, toggleTheme, mounted } = useTheme();
-  const { favorites, mounted: favoritesMounted } = useFavorites();
 
-  // Debounced search handler
-  const debouncedSearchChange = useMemo(
-    () => debounce((query: string) => onSearchChange(query), 500),
-    [onSearchChange]
-  );
+  const { favorites, mounted: favoritesMounted } = useFavoritesStore();
 
-  // Cancel debounce on unmount
-  useEffect(() => {
-    return () => {
-      debouncedSearchChange.cancel();
-    };
-  }, [debouncedSearchChange]);
-
-  // Fetch categories from Supabase
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const { data, error } = await supabase
-        .from<"Category", Category>("Category")
-        .select("*")
-        .order("created_at", { ascending: true });
-
-      if (error) {
-        console.error("Error fetching categories:", error);
-      } else if (data) {
-        // Optionally prepend an "All" pseudo-category
-        setCategories([
-          { id: "all", name: "All", slug: "all", created_at: "" },
-          ...data,
-        ]);
-      }
-    };
-
-    fetchCategories();
-  }, []);
+  const hasFavorites = favorites.length > 0;
 
   return (
     <>
@@ -96,59 +39,7 @@ export default function Navbar({
               </h1>
             </Link>
 
-            {/* Desktop Search Bar */}
-            <div className="flex-1 max-w-md hidden sm:block">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder="Search prompts…"
-                  defaultValue={searchQuery}
-                  onChange={(e) => debouncedSearchChange(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-background text-foreground placeholder-muted-foreground rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-accent"
-                />
-              </div>
-            </div>
-
             <span className="flex flex-row gap-x-4">
-              {/* Desktop Category Dropdown */}
-              <div className="relative hidden md:block">
-                <button
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center gap-2 px-4 py-2 bg-background text-foreground rounded-lg border border-border hover:bg-muted transition-colors"
-                >
-                  {selectedCategory}
-                  <ChevronDown className="w-4 h-4" />
-                </button>
-
-                {isDropdownOpen && (
-                  <>
-                    <button
-                      className="fixed bg-black/5 inset-0 z-0"
-                      onClick={() => setIsDropdownOpen(false)}
-                    />
-                    <div className="absolute right-0 mt-2 w-64 bg-card rounded-lg shadow-lg z-50 overflow-hidden">
-                      {categories.map((category) => (
-                        <button
-                          key={category.id}
-                          onClick={() => {
-                            onCategoryChange(category.id);
-                            setIsDropdownOpen(false);
-                          }}
-                          className={`w-full text-left px-4 py-2 transition-colors cursor-pointer ${
-                            selectedCategory === category.id
-                              ? "bg-accent text-accent-foreground hover:bg-accent/80"
-                              : "text-foreground hover:bg-accent/50"
-                          }`}
-                        >
-                          {category.name}
-                        </button>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </div>
-
               {/* Desktop Saved Prompts Link */}
               {favoritesMounted && (
                 <Link
@@ -156,7 +47,7 @@ export default function Navbar({
                   className="hidden sm:flex items-center gap-2 px-3 py-2 bg-background text-foreground rounded-lg border border-border hover:bg-muted transition-colors"
                   title="View saved prompts"
                 >
-                  {favorites.length > 0 ? (
+                  {hasFavorites ? (
                     <HeartIcon className="w-4 h-4 text-red-500 fill-red-500" />
                   ) : (
                     <Heart className="w-4 h-4" />
@@ -180,6 +71,7 @@ export default function Navbar({
                 </button>
               )}
 
+              {/* Mobile Menu */}
               <button
                 onClick={() => setIsDrawerOpen(!isDrawerOpen)}
                 className="md:hidden p-2 hover:bg-background rounded-lg transition-colors"
@@ -195,10 +87,6 @@ export default function Navbar({
       <MobileDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        searchQuery={searchQuery}
-        onSearchChange={onSearchChange}
-        selectedCategory={selectedCategory}
-        onCategoryChange={onCategoryChange}
       />
     </>
   );
