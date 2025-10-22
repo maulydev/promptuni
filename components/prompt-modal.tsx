@@ -87,6 +87,14 @@ export default function PromptModal({ prompt, onClose }: PromptModalProps) {
               {prompt.prompt}
             </p>
           </div>
+          
+          {/* Help Text */}
+          <div>
+            <p className="text-sm text-muted-foreground mb-2">Hint</p>
+            <p className="text-foreground bg-amber-200/50 p-4 rounded-lg leading-relaxed">
+              {prompt.help_text}
+            </p>
+          </div>
 
           {/* Instructions */}
           <div>
