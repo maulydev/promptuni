@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     siteName: "Prompt Uni",
     images: [
       {
-        url: "/og-image.png",
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Prompt Uni - AI Image Generation Prompts",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     title: "Prompt Uni - Trending AI Image Generation Prompts",
     description:
       "Find trending prompts for Gemini, Midjourney, and Firefly. Generate realistic and creative AI images instantly.",
-    images: ["/og-image.png"],
+    images: ["/og-image.jpg"],
     creator: "@promptuni",
   },
   icons: {
