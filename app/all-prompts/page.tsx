@@ -1,75 +1,104 @@
 "use client";
 
 import { supabase } from "@/api/client";
+import ErrorState from "@/components/error-state";
+import LoadingState from "@/components/loading-state";
+import NotFound from "@/components/not-found";
 import PromptCard from "@/components/prompt-card";
 import PromptFilters from "@/components/prompt-filter";
 import PromptModal from "@/components/prompt-modal";
 import { Category, Prompt } from "@/types/prompt";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 export default function AllPromptsPage() {
-  const [prompts, setPrompts] = useState<Prompt[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  
+  const pageSize = 20;
 
-  // Fetch categories
-  useEffect(() => {
-    const fetchCategories = async () => {
+  /** Fetch categories */
+  const {
+    data: categories = [],
+    isLoading: categoriesLoading,
+    error: categoriesError,
+  } = useQuery<Category[]>({
+    queryKey: ["categories"],
+    queryFn: async () => {
       const { data, error } = await supabase
         .from<"Category", Category>("Category")
         .select("*")
         .order("created_at", { ascending: true });
+      if (error) throw error;
+      return [{ id: "all", name: "All", slug: "all", created_at: "" }, ...data];
+    },
+  });
 
-      if (error) console.error(error);
-      else
-        setCategories([
-          { id: "all", name: "All", slug: "all", created_at: "" },
-          ...data,
-        ]);
-    };
-    fetchCategories();
-  }, []);
+  const {
+    data: prompts = [],
+    isLoading: promptsLoading,
+    error: promptsError,
+  } = useQuery<Prompt[]>({
+    queryKey: ["prompts", searchQuery, selectedCategory, currentPage],
+    queryFn: async () => {
+      // Count total prompts
+      let countQuery = supabase
+        .from<"Prompts", Prompt>("Prompts")
+        .select("id", { count: "exact", head: true });
 
-  // Fetch prompts
-  useEffect(() => {
-    const loadPrompts = async () => {
-      try {
-        setLoading(true);
-        let query = supabase
-          .from<"Prompts", Prompt>("Prompts")
-          .select("*, Category(*)");
+      if (searchQuery)
+        countQuery = countQuery.ilike("title", `%${searchQuery}%`);
+      if (selectedCategory !== "all")
+        countQuery = countQuery.filter("category_id", "eq", selectedCategory);
 
-        if (searchQuery) query = query.ilike("title", `%${searchQuery}%`);
-        if (selectedCategory !== "all")
-          query = query.filter("category_id", "eq", selectedCategory);
+      const { count, error: countError } = await countQuery;
+      if (countError) throw countError;
+      setTotalPages(Math.ceil((count || 0) / pageSize) || 1);
 
-        const { data, error } = await query.order("created_at", {
-          ascending: false,
-        });
+      // Fetch current page
+      const start = (currentPage - 1) * pageSize;
+      const end = start + pageSize - 1;
 
-        if (error) throw error;
-        setPrompts(data || []);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to load prompts. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadPrompts();
-  }, [searchQuery, selectedCategory]);
+      let query = supabase
+        .from<"Prompts", Prompt>("Prompts")
+        .select("*, Category(*)")
+        .order("created_at", { ascending: false })
+        .range(start, end);
+
+      if (searchQuery) query = query.ilike("title", `%${searchQuery}%`);
+      if (selectedCategory !== "all")
+        query = query.filter("category_id", "eq", selectedCategory);
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data || [];
+    },
+
+    staleTime: 1000 * 60 * 10, // cache for 10 mins
+  });
+
+  const [totalPages, setTotalPages] = useState(1);
+
+  const handlePageChange = (page: number) => setCurrentPage(page);
 
   return (
     <main className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative py-16 bg-linear-to-b from-background via-background to-secondary/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="md:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link
             href="/"
             className="text-primary hover:underline mb-4 inline-block"
@@ -79,18 +108,19 @@ export default function AllPromptsPage() {
           <h1 className="text-4xl sm:text-5xl font-bold text-foreground mb-4 text-balance">
             All Prompts
           </h1>
-          <p className="text-lg text-muted-foreground text-balance mb-6">
+          <p className="text-lg text-muted-foreground mb-6">
             Explore our complete collection of AI image generation prompts. Use
             search and filters below.
           </p>
 
-          {/* Extracted Search & Category Filters */}
           <PromptFilters
             categories={categories}
             selectedCategory={selectedCategory}
             onCategoryChange={setSelectedCategory}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
+            categoriesLoading={categoriesLoading}
+            categoriesError={categoriesError}
           />
         </div>
       </section>
@@ -98,43 +128,112 @@ export default function AllPromptsPage() {
       {/* Gallery Section */}
       <section className="pb-16 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {loading ? (
-            <div className="text-center py-32 text-muted-foreground">
-              Loading prompts...
-            </div>
-          ) : error ? (
-            <div className="text-center py-32 text-red-500">{error}</div>
+          {promptsLoading ? (
+            <LoadingState />
+          ) : promptsError ? (
+            <ErrorState error={promptsError.message} />
           ) : prompts.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-32 px-4 text-center bg-foreground/5 rounded-3xl">
-              <div className="bg-foreground/5 text-primary rounded-full w-16 h-16 flex items-center justify-center mb-6">
-                <span className="text-2xl">😕</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-semibold text-foreground mb-2">
-                No prompts found
-              </h2>
-              <p className="text-muted-foreground text-lg mb-6">
-                Try adjusting your search or selecting a different category.
-              </p>
-              <button
-                className="px-6 py-2 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/80 transition-colors shadow-sm"
-                onClick={() => {
-                  setSelectedCategory("all");
-                  setSearchQuery("");
-                }}
-              >
-                Reset Filters
-              </button>
-            </div>
+            <NotFound
+              setSearchQuery={setSearchQuery}
+              setSelectedCategory={setSelectedCategory}
+            />
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
-              {prompts.map((prompt) => (
-                <PromptCard
-                  key={prompt.id}
-                  prompt={prompt}
-                  onSelect={setSelectedPrompt}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+                {prompts.map((prompt: Prompt) => (
+                  <PromptCard
+                    key={prompt.id}
+                    prompt={prompt}
+                    onSelect={setSelectedPrompt}
+                  />
+                ))}
+              </div>
+
+              {/* Pagination */}
+              <Pagination>
+                <PaginationContent>
+                  {/* Previous */}
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (currentPage > 1) handlePageChange(currentPage - 1);
+                      }}
+                    />
+                  </PaginationItem>
+
+                  {/* First page */}
+                  {currentPage > 3 && (
+                    <>
+                      <PaginationItem>
+                        <PaginationLink
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handlePageChange(1);
+                          }}
+                        >
+                          1
+                        </PaginationLink>
+                      </PaginationItem>
+                      {currentPage > 4 && <PaginationEllipsis />}
+                    </>
+                  )}
+
+                  {/* Pages around current */}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter(
+                      (page) =>
+                        page >= currentPage - 2 && page <= currentPage + 2
+                    )
+                    .map((page) => (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          href="#"
+                          isActive={page === currentPage}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handlePageChange(page);
+                          }}
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+
+                  {/* Last page */}
+                  {currentPage < totalPages - 2 && (
+                    <>
+                      {currentPage < totalPages - 3 && <PaginationEllipsis />}
+                      <PaginationItem>
+                        <PaginationLink
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handlePageChange(totalPages);
+                          }}
+                        >
+                          {totalPages}
+                        </PaginationLink>
+                      </PaginationItem>
+                    </>
+                  )}
+
+                  {/* Next */}
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (currentPage < totalPages)
+                          handlePageChange(currentPage + 1);
+                      }}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </>
           )}
         </div>
       </section>

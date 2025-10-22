@@ -46,9 +46,9 @@ export default function PromptCard({ prompt, onSelect }: PromptCardProps) {
           {prompt.title}
         </h3>
         <div className="flex items-center justify-between">
-          <span className="text-xs px-2 py-1 bg-accent text-accent-foreground rounded-full">
+          <p className="text-xs px-2 py-1 bg-accent text-accent-foreground rounded-full line-clamp-1 max-w-48">
             {prompt.Category.name}
-          </span>
+          </p>
           <button
             onClick={(e) => {
               e.stopPropagation();
