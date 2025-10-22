@@ -1,178 +1,75 @@
 "use client";
 
+import { supabase } from "@/api/client";
 import Footer from "@/components/footer";
 import Navbar from "@/components/navbar";
 import PromptCard from "@/components/prompt-card";
 import PromptModal from "@/components/prompt-modal";
+import { Prompt } from "@/types/prompt";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { useMemo, useState } from "react";
-
-interface Prompt {
-  id: string;
-  title: string;
-  category: string;
-  image: string;
-  prompt: string;
-}
-
-const prompts: Prompt[] = [
-  {
-    id: "1",
-    title: "Vintage Studio Portrait",
-    category: "Portrait",
-    image: "/vintage-studio-portrait.jpg",
-    prompt:
-      "A vintage studio portrait with warm sepia tones, professional lighting, and classic composition. Shot on film with soft focus background.",
-  },
-  {
-    id: "2",
-    title: "Anime Character",
-    category: "Cartoon",
-    image: "/anime-character-art.jpg",
-    prompt:
-      "Beautiful anime character with expressive eyes, vibrant colors, and detailed hair. Studio Ghibli style illustration.",
-  },
-  {
-    id: "3",
-    title: "Cinematic Hero Shot",
-    category: "Cinematic",
-    image: "/cinematic-hero-shot.jpg",
-    prompt:
-      "Epic cinematic hero shot with dramatic lighting, volumetric fog, and cinematic color grading. Movie poster quality.",
-  },
-  {
-    id: "4",
-    title: "Fantasy Warrior",
-    category: "Fantasy",
-    image: "/fantasy-warrior.png",
-    prompt:
-      "Epic fantasy warrior with intricate armor, magical aura, and mystical background. High fantasy art style.",
-  },
-  {
-    id: "5",
-    title: "Product Photography",
-    category: "Product",
-    image: "/professional-product-photography.png",
-    prompt:
-      "Professional product photography with clean white background, perfect lighting, and sharp focus. Commercial quality.",
-  },
-  {
-    id: "6",
-    title: "Oil Painting Portrait",
-    category: "Portrait",
-    image: "/oil-painting-portrait.png",
-    prompt:
-      "Classical oil painting portrait with rich textures, warm color palette, and masterful brushwork. Renaissance style.",
-  },
-  {
-    id: "7",
-    title: "Cartoon Adventure",
-    category: "Cartoon",
-    image: "/cartoon-adventure-scene.jpg",
-    prompt:
-      "Colorful cartoon adventure scene with playful characters, vibrant backgrounds, and whimsical style.",
-  },
-  {
-    id: "8",
-    title: "Sci-Fi Landscape",
-    category: "Cinematic",
-    image: "/sci-fi-landscape-futuristic.jpg",
-    prompt:
-      "Futuristic sci-fi landscape with neon lights, flying vehicles, and cyberpunk atmosphere. Blade Runner inspired.",
-  },
-  {
-    id: "9",
-    title: "Dragon Fantasy",
-    category: "Fantasy",
-    image: "/dragon-fantasy-art.jpg",
-    prompt:
-      "Majestic dragon in fantasy landscape with magical effects, detailed scales, and epic composition.",
-  },
-  {
-    id: "10",
-    title: "Luxury Watch",
-    category: "Product",
-    image: "/luxury-watch-product.jpg",
-    prompt:
-      "Luxury watch product shot with premium lighting, reflective surfaces, and elegant styling.",
-  },
-  {
-    id: "11",
-    title: "Fashion Portrait",
-    category: "Portrait",
-    image: "/fashion-portrait-model.jpg",
-    prompt:
-      "High fashion portrait with editorial styling, professional makeup, and sophisticated lighting.",
-  },
-  {
-    id: "12",
-    title: "Pixel Art Character",
-    category: "Cartoon",
-    image: "/pixel-art-character.png",
-    prompt:
-      "Retro pixel art character with vibrant colors, 8-bit style, and nostalgic gaming aesthetic.",
-  },
-  {
-    id: "13",
-    title: "Watercolor Landscape",
-    category: "Portrait",
-    image: "/watercolor-landscape.jpg",
-    prompt:
-      "Beautiful watercolor landscape with soft colors, flowing brushstrokes, and artistic composition.",
-  },
-  {
-    id: "14",
-    title: "Steampunk Airship",
-    category: "Fantasy",
-    image: "/steampunk-airship.jpg",
-    prompt:
-      "Steampunk airship with intricate mechanical details, brass and copper tones, and Victorian aesthetics.",
-  },
-  {
-    id: "15",
-    title: "Neon City Night",
-    category: "Cinematic",
-    image: "/neon-city-night.jpg",
-    prompt:
-      "Neon-lit cyberpunk city at night with glowing signs, rain-slicked streets, and futuristic architecture.",
-  },
-  {
-    id: "16",
-    title: "Luxury Handbag",
-    category: "Product",
-    image: "/luxury-handbag.jpg",
-    prompt:
-      "Luxury designer handbag product shot with premium styling, soft lighting, and elegant presentation.",
-  },
-];
+import { useEffect, useState } from "react";
 
 const ITEMS_PER_PAGE = 8;
 
 export default function AllPromptsPage() {
+  const [prompts, setPrompts] = useState<Prompt[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
-  const filteredPrompts = useMemo(() => {
-    return prompts.filter((prompt) => {
-      const matchesSearch = prompt.title
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-      const matchesCategory =
-        selectedCategory === "All" || prompt.category === selectedCategory;
-      return matchesSearch && matchesCategory;
-    });
-  }, [searchQuery, selectedCategory]);
+  // Fetch prompts from Supabase
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
 
-  const totalPages = Math.ceil(filteredPrompts.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedPrompts = filteredPrompts.slice(
-    startIndex,
-    startIndex + ITEMS_PER_PAGE
-  );
+        // Base query
+        let query = supabase
+          .from<"Prompts", Prompt>("Prompts")
+          .select("*, Category(*)", { count: "exact" });
 
+        if (searchQuery) {
+          query = query.ilike("title", `%${searchQuery}%`);
+        }
+
+        // Apply category filter
+        // if (selectedCategory && selectedCategory !== "All") {
+        //   query = query.eq("category", selectedCategory);
+        // }
+
+        // Calculate pagination
+        const from = (currentPage - 1) * ITEMS_PER_PAGE;
+        const to = from + ITEMS_PER_PAGE - 1;
+
+        // Execute query with range
+        const { data, count, error } = await query
+          .order("created_at", { ascending: false })
+          .range(from, to);
+
+        if (error) throw error;
+
+        setPrompts(data || []);
+        setTotalCount(count || 0);
+        setTotalPages(Math.ceil((count || 0) / ITEMS_PER_PAGE));
+      } catch (err) {
+        console.error("❌ Error fetching prompts:", err);
+        setError("Failed to load prompts. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, [searchQuery, selectedCategory, currentPage]);
+
+  // Handlers
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
     setCurrentPage(1);
@@ -192,7 +89,7 @@ export default function AllPromptsPage() {
         onCategoryChange={handleCategoryChange}
       />
 
-      {/* Hero Section for All Prompts Page */}
+      {/* Hero Section */}
       <section className="relative py-16 px-4 sm:px-6 lg:px-8 bg-linear-to-b from-background via-background to-secondary/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link
@@ -205,17 +102,22 @@ export default function AllPromptsPage() {
             All Prompts
           </h1>
           <p className="text-lg text-muted-foreground text-balance">
-            Explore our complete collection of AI image generation prompts. Use
-            the search and filters to find the perfect prompt for your next
-            creation.
+            Explore our complete collection of AI image generation prompts from
+            the community. Use the search and filters to find inspiration.
           </p>
         </div>
       </section>
 
-      {/* Gallery with pagination */}
+      {/* Gallery Section */}
       <section className="py-16 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {paginatedPrompts.length === 0 ? (
+          {loading ? (
+            <div className="text-center py-32 text-muted-foreground">
+              Loading prompts...
+            </div>
+          ) : error ? (
+            <div className="text-center py-32 text-red-500">{error}</div>
+          ) : prompts?.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-32 px-4 text-center bg-foreground/5 rounded-3xl">
               <div className="bg-foreground/5 text-primary rounded-full w-16 h-16 flex items-center justify-center mb-6">
                 <span className="text-2xl">😕</span>
@@ -238,8 +140,9 @@ export default function AllPromptsPage() {
             </div>
           ) : (
             <>
+              {/* Grid */}
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
-                {paginatedPrompts.map((prompt) => (
+                {prompts?.map((prompt) => (
                   <PromptCard
                     key={prompt.id}
                     prompt={prompt}
@@ -248,6 +151,7 @@ export default function AllPromptsPage() {
                 ))}
               </div>
 
+              {/* Pagination */}
               {totalPages > 1 && (
                 <div className="flex items-center justify-center gap-4">
                   <button
@@ -262,7 +166,7 @@ export default function AllPromptsPage() {
                   </button>
 
                   <div className="flex items-center gap-2">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)?.map(
                       (page) => (
                         <button
                           key={page}
@@ -293,9 +197,9 @@ export default function AllPromptsPage() {
               )}
 
               <div className="text-center mt-8 text-muted-foreground text-sm">
-                Showing {startIndex + 1} to{" "}
-                {Math.min(startIndex + ITEMS_PER_PAGE, filteredPrompts.length)}{" "}
-                of {filteredPrompts.length} prompts
+                Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}–
+                {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} of{" "}
+                {totalCount} prompts
               </div>
             </>
           )}

@@ -1,15 +1,10 @@
 "use client";
 
+import { Prompt } from "@/types/prompt";
 import { Copy, X } from "lucide-react";
 import { useEffect } from "react";
+import ImageWithFallback from "./image-with-fallback";
 
-interface Prompt {
-  id: string;
-  title: string;
-  category: string;
-  image: string;
-  prompt: string;
-}
 
 interface PromptModalProps {
   prompt: Prompt;
@@ -69,10 +64,11 @@ export default function PromptModal({ prompt, onClose }: PromptModalProps) {
         <div className="p-6 space-y-6">
           {/* Image */}
           <div className="rounded-lg overflow-hidden">
-            <img
-              src={prompt.image || "/placeholder.svg"}
+            <ImageWithFallback
+              src={prompt.image}
               alt={prompt.title}
               className="w-full h-auto object-cover"
+              fallbackClassName="w-full h-96 object-cover"
             />
           </div>
 
@@ -80,7 +76,7 @@ export default function PromptModal({ prompt, onClose }: PromptModalProps) {
           <div>
             <p className="text-sm text-muted-foreground mb-2">Category</p>
             <span className="inline-block px-3 py-1 bg-accent text-accent-foreground rounded-full text-sm">
-              {prompt.category}
+              {prompt.Category.name}
             </span>
           </div>
 

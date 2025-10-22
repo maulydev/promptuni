@@ -5,17 +5,11 @@ import Navbar from "@/components/navbar";
 import PromptCard from "@/components/prompt-card";
 import PromptModal from "@/components/prompt-modal";
 import { useFavorites } from "@/hooks/use-favorites";
+import { Prompt } from "@/types/prompt";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
-interface Prompt {
-  id: string;
-  title: string;
-  category: string;
-  image: string;
-  prompt: string;
-}
 
 const allPrompts: Prompt[] = [
   {
@@ -25,6 +19,9 @@ const allPrompts: Prompt[] = [
     image: "/vintage-studio-portrait.jpg",
     prompt:
       "A vintage studio portrait with warm sepia tones, professional lighting, and classic composition. Shot on film with soft focus background.",
+    created_at: "2023-08-01 12:00:00",
+    help_text: "",
+    category_id: "12345678"
   },
   {
     id: "2",
@@ -33,6 +30,9 @@ const allPrompts: Prompt[] = [
     image: "/anime-character-art.jpg",
     prompt:
       "Beautiful anime character with expressive eyes, vibrant colors, and detailed hair. Studio Ghibli style illustration.",
+    created_at: "2023-08-01 12:00:00",
+    help_text: "",
+    category_id: "12345678"
   },
   {
     id: "3",
@@ -41,6 +41,9 @@ const allPrompts: Prompt[] = [
     image: "/cinematic-hero-shot.jpg",
     prompt:
       "Epic cinematic hero shot with dramatic lighting, volumetric fog, and cinematic color grading. Movie poster quality.",
+    created_at: "2023-08-01 12:00:00",
+    help_text: "",
+    category_id: "12345678"
   },
   {
     id: "4",
@@ -49,6 +52,9 @@ const allPrompts: Prompt[] = [
     image: "/fantasy-warrior.png",
     prompt:
       "Epic fantasy warrior with intricate armor, magical aura, and mystical background. High fantasy art style.",
+    created_at: "2023-08-01 12:00:00",
+    help_text: "",
+    category_id: "12345678"
   },
   {
     id: "5",
@@ -57,6 +63,9 @@ const allPrompts: Prompt[] = [
     image: "/professional-product-photography.png",
     prompt:
       "Professional product photography with clean white background, perfect lighting, and sharp focus. Commercial quality.",
+    created_at: "2023-08-01 12:00:00",
+    help_text: "",
+    category_id: "12345678"
   },
   {
     id: "6",
@@ -65,6 +74,9 @@ const allPrompts: Prompt[] = [
     image: "/oil-painting-portrait.png",
     prompt:
       "Classical oil painting portrait with rich textures, warm color palette, and masterful brushwork. Renaissance style.",
+    created_at: "2023-08-01 12:00:00",
+    help_text: "",
+    category_id: "12345678"
   },
   {
     id: "7",
@@ -73,6 +85,9 @@ const allPrompts: Prompt[] = [
     image: "/cartoon-adventure-scene.jpg",
     prompt:
       "Colorful cartoon adventure scene with playful characters, vibrant backgrounds, and whimsical style.",
+    created_at: "2023-08-01 12:00:00",
+    help_text: "",
+    category_id: "12345678"
   },
   {
     id: "8",
@@ -81,6 +96,9 @@ const allPrompts: Prompt[] = [
     image: "/sci-fi-landscape-futuristic.jpg",
     prompt:
       "Futuristic sci-fi landscape with neon lights, flying vehicles, and cyberpunk atmosphere. Blade Runner inspired.",
+    created_at: "2023-08-01 12:00:00",
+    help_text: "",
+    category_id: "12345678"
   },
   {
     id: "9",
@@ -89,6 +107,9 @@ const allPrompts: Prompt[] = [
     image: "/dragon-fantasy-art.jpg",
     prompt:
       "Majestic dragon in fantasy landscape with magical effects, detailed scales, and epic composition.",
+    created_at: "2023-08-01 12:00:00",
+    help_text: "",
+    category_id: "12345678"
   },
   {
     id: "10",
@@ -97,6 +118,9 @@ const allPrompts: Prompt[] = [
     image: "/luxury-watch-product.jpg",
     prompt:
       "Luxury watch product shot with premium lighting, reflective surfaces, and elegant styling.",
+    created_at: "2023-08-01 12:00:00",
+    help_text: "",
+    category_id: "12345678"
   },
   {
     id: "11",
@@ -105,6 +129,9 @@ const allPrompts: Prompt[] = [
     image: "/fashion-portrait-model.jpg",
     prompt:
       "High fashion portrait with editorial styling, professional makeup, and sophisticated lighting.",
+    created_at: "2023-08-01 12:00:00",
+    help_text: "",
+    category_id: "12345678"
   },
   {
     id: "12",
@@ -113,6 +140,9 @@ const allPrompts: Prompt[] = [
     image: "/pixel-art-character.png",
     prompt:
       "Retro pixel art character with vibrant colors, 8-bit style, and nostalgic gaming aesthetic.",
+    created_at: "2023-08-01 12:00:00",
+    help_text: "",
+    category_id: "12345678"
   },
 ];
 
