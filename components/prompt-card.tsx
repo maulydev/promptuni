@@ -42,15 +42,15 @@ export default function PromptCard({ prompt, onSelect }: PromptCardProps) {
       </div>
 
       <div className="space-y-2">
-        <h3 className="font-semibold text-foreground text-sm line-clamp-2">
+        <h3 className="font-bold text-foreground text-xs md:text-sm line-clamp-1 md:line-clamp-2">
           {prompt.title}
         </h3>
         <div className="flex items-center justify-between">
-          <p className="text-xs px-2 py-1 bg-accent text-accent-foreground rounded-full line-clamp-1 max-w-48">
+          <p className="text-[9px] md:text-xs px-2 py-1 bg-accent text-accent-foreground rounded-full line-clamp-1 max-w-48">
             {prompt.Category.name}
           </p>
 
-          <p className="text-xs px-2 py-1 bg-foreground/10 text-foreground rounded-full line-clamp-1 max-w-48">
+          <p className="text-xs px-2 py-1 bg-foreground/10 text-foreground rounded-full line-clamp-1 max-w-48 hidden lg:block">
             # {String(prompt.copies).padStart(3, "0")}
           </p>
 
