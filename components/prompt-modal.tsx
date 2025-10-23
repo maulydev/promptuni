@@ -62,7 +62,7 @@ export default function PromptModal({ prompt, onClose }: PromptModalProps) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="sticky top-0 flex items-center justify-between p-6 border-b border-border bg-card">
+        <div className="sticky top-0 flex items-center justify-between p-6 border-b border-border bg-card z-10">
           <h2 className="text-2xl font-bold text-foreground">{prompt.title}</h2>
           <button
             onClick={onClose}
@@ -75,7 +75,10 @@ export default function PromptModal({ prompt, onClose }: PromptModalProps) {
         {/* Content */}
         <div className="p-6 space-y-6">
           {/* Image */}
-          <div className="rounded-lg overflow-hidden">
+          <div className="rounded-lg overflow-hidden relative">
+            <p className="text-xs px-2 py-1 bg-accent/50 text-foreground rounded-full line-clamp-1 max-w-max absolute top-2 right-2">
+              # {String(prompt.copies).padStart(3, "0")}
+            </p>
             <ImageWithFallback
               src={prompt.image_url}
               alt={prompt.title}
