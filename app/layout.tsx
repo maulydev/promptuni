@@ -12,7 +12,8 @@ const geist = Geist({ subsets: ["latin"] });
 const geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Prompt Uni | Best AI Image Generation Prompts for Gemini, Midjourney & Firefly",
+  title:
+    "Prompt Uni | Best AI Image Generation Prompts for Gemini, Midjourney & Firefly",
   description:
     "Explore and copy high-quality AI image generation prompts for Gemini, Midjourney, Leonardo AI, and Firefly. Discover trending, creative, and realistic prompt ideas daily on Prompt Uni.",
   keywords: [

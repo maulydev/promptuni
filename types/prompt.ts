@@ -4,6 +4,7 @@ export interface Prompt {
   help_text: string;
   image_url: string;
   prompt: string;
+  copies: number;
   created_at: string;
   category_id: string;
   Category: Category;

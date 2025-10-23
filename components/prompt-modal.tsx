@@ -1,10 +1,10 @@
 "use client";
 
+import { supabase } from "@/api/client";
 import { Prompt } from "@/types/prompt";
 import { Copy, X } from "lucide-react";
 import { useEffect } from "react";
 import ImageWithFallback from "./image-with-fallback";
-
 
 interface PromptModalProps {
   prompt: Prompt;
@@ -34,10 +34,22 @@ export default function PromptModal({ prompt, onClose }: PromptModalProps) {
     };
   }, [prompt]);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(
-      `${prompt.prompt}\nUse the face from the image attached.`
+  const handleCopy = async () => {
+    // Copy to clipboard
+    await navigator.clipboard.writeText(
+      `Use the face from the image attached.\n${prompt.prompt}`
     );
+
+    alert("Prompt copied to clipboard!");
+
+    // Increment copies safely
+    const { data, error } = await supabase
+      .from("Prompts")
+      .update({ copies: prompt.copies + 1 }) // atomic increment
+      .eq("id", prompt.id);
+
+    if (error) console.error("Error updating copies:", error);
+    if (data) console.log("Copies updated:", data);
   };
 
   return (
@@ -87,7 +99,7 @@ export default function PromptModal({ prompt, onClose }: PromptModalProps) {
               {prompt.prompt}
             </p>
           </div>
-          
+
           {/* Help Text */}
           <div>
             <p className="text-sm text-muted-foreground mb-2">Hint</p>
@@ -122,7 +134,7 @@ export default function PromptModal({ prompt, onClose }: PromptModalProps) {
           {/* Copy Button */}
           <button
             onClick={handleCopy}
-            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition-opacity"
+            className="w-full active:scale-95 flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition-opacity"
           >
             <Copy className="w-5 h-5" />
             Copy Prompt

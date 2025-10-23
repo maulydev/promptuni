@@ -1,6 +1,6 @@
 import { useFavoritesStore } from "@/stores/useFavoritesStore";
 import { Prompt } from "@/types/prompt";
-import { Copy, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
 import ImageWithFallback from "./image-with-fallback";
 
 interface PromptCardProps {
@@ -49,7 +49,12 @@ export default function PromptCard({ prompt, onSelect }: PromptCardProps) {
           <p className="text-xs px-2 py-1 bg-accent text-accent-foreground rounded-full line-clamp-1 max-w-48">
             {prompt.Category.name}
           </p>
-          <button
+
+          <p className="text-xs px-2 py-1 bg-foreground/10 text-foreground rounded-full line-clamp-1 max-w-48">
+            # {String(prompt.copies).padStart(3, "0")}
+          </p>
+
+          {/* <button
             onClick={(e) => {
               e.stopPropagation();
               navigator.clipboard.writeText(prompt.prompt);
@@ -58,7 +63,7 @@ export default function PromptCard({ prompt, onSelect }: PromptCardProps) {
             title="Copy prompt"
           >
             <Copy className="w-4 h-4 text-muted-foreground hover:text-foreground" />
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

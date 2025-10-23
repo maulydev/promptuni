@@ -45,8 +45,8 @@ export default function PromptGallery({ onPromptSelect }: PromptGalleryProps) {
         const { data, error } = await supabase
           .from<"Prompts", Prompt>("Prompts")
           .select(`*, Category(*)`)
-          .order("created_at", { ascending: false })
-          .range(0, 7);
+          .order("copies", { ascending: false })
+          .limit(8)
 
         if (error) throw error;
 
